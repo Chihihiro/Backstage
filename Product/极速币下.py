@@ -9,41 +9,10 @@
 
 from requests import Session
 from BaseSpider import BaseSpider
-from DealWithCookie import cookie_to_dict
 from scrapy import Selector
 from time import sleep
 import json
 import time
-import http.cookiejar
-import urllib.request, urllib.parse, urllib.error
-
-
-
-def login():
-    login_url = 'https://passport.jinfuzi.com/passport/user/doLogin.html'
-    values = {'paramMap.password': '68125542', 'paramMap.userName': '15026588463'}
-    postdata = urllib.parse.urlencode(values).encode()
-    user_agent = r'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.157 Safari/537.36'
-    headers = {'User-Agent': user_agent}
-    cookie_filename = 'cookie_jar.txt'
-    cookie_jar = http.cookiejar.MozillaCookieJar(cookie_filename)
-    handler = urllib.request.HTTPCookieProcessor(cookie_jar)
-    opener = urllib.request.build_opener(handler)
-    try:
-        print('-------------')
-        request = urllib.request.Request(login_url, data=postdata, headers=headers, method='POST')
-        response = opener.open(request)
-    except urllib.error.URLError as e:
-        print(e.code, ':', e.reason)
-    # cookie_jar.save(ignore_discard=True, ignore_expires=True)  # 保存cookie到cookie.txt中
-
-    for item in cookie_jar:
-        print('Name = ' + item.name)
-        print('Value = ' + item.value)
-
-        cook = item.value
-        cookise = {'Cookie': cook}
-        return cookise
 
 
 
@@ -52,13 +21,24 @@ class DRB(BaseSpider):
         super(DRB, self).__init__(account)
 
     def get_info(self):
+        xpath_info = {
+            "username": '//*[@id="app"]/div/div/div[2]/form/div[1]/div/div/input',
+            "password": '//*[@id="app"]/div/div/div[2]/form/div[2]/div/div/input',
+            "login_button": '//*[@id="app"]/div/div/div[2]/form/div[3]/button',
+            "check_code": '',
+            "code_image_url": '',
+            "success_ele": ''
+        }
+        # 获取cookie
+        token = self.no_check_get_token(xpath_info, 'cms_web_token')
+        # 将cookie设置给session
         # 设置session
         session = Session()
         # 设置头部信息
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
             'Host': 'merchant.xianjinxia.com',
-            'loginToken': '28307fbeda88ea82e7401562460a72668f607836e344de926321f3abfd0b7e08054a9db9c98a93a73dcf9301409cf55694ad8f165fbf7a460123e97d6ae1e360',
+            'loginToken': token,
             'Origin': 'http: // merchant.xianjinxia.com',
             'Referer': 'http: // merchant.xianjinxia.com /'
         }
@@ -88,11 +68,11 @@ class DRB(BaseSpider):
 
 
 SH = {
-    "login_url": '',
+    "login_url": 'http://merchant.xianjinxia.com/#/login',
     "area": "上海",
     "product": "极速币下",
-    "username": "",
-    "password": "",
+    "username": "15656789598",
+    "password": "15656789598",
     "channel": ""
 }
 

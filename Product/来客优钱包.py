@@ -53,19 +53,19 @@ class YQS(BaseSpider):
             "Cookie": f"{cookie['name']}={cookie['value']}",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
         }
+        print(headers)
         form = {
-            'page': '1',
+            'page': 1,
             'agentid': self.chennel_id,
-            'startTime': str(int(time.mktime(time.strptime(f"{self.today} 00:00:00", "%Y-%m-%d %H:%M:%S")))),
-            'endTime': str(int(time.mktime(time.strptime(f"{self.tomorrow} 00:00:00", "%Y-%m-%d %H:%M:%S"))))
+            'startTime': int(time.mktime(time.strptime(f"{self.today} 00:00:00", "%Y-%m-%d %H:%M:%S"))),
+            'endTime': int(time.mktime(time.strptime(f"{self.tomorrow} 00:00:00", "%Y-%m-%d %H:%M:%S")))
         }
         print(form)
         # 访问url
         response = session.post(page_url, headers=headers, data=form)
         # 获取html
-        # info = response.json()
-        # print(info)
-        print(response.text)
+        info = response.json()
+        print(info)
         # 最终结果
         # result = {
         #     "注册人数": info['total'],
@@ -80,7 +80,7 @@ SP = {
     "login_url": "http://payday-likeyou.lkdjhls.cn/admin/likeyou.html#/sign-in",
     "area": "四平",
     "product": "来客优钱包",
-    "username": "yhy-sgls3",
+    "username": "yhy-sgls1",
     "password": "123456",
     "channel": "",
     "id": "30656672"

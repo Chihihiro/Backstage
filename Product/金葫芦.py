@@ -21,12 +21,23 @@ class DRB(BaseSpider):
         super(DRB, self).__init__(account)
 
     def get_info(self):
+        xpath_info = {
+            "username": '//*[@id="account"]',
+            "password": '//*[@id="password"]',
+            "login_button": '//*[@id="root"]/div/div/div[2]/div/form/div[4]/div/div/span/button',
+            "check_code": '//*[@id="imgCode"]',
+            "code_image_url": '//*[@id="root"]/div/div/div[2]/div/form/div[3]/div/div/span/div/div[2]/img',
+            "success_ele": '//*[@id="root"]/div/div/div[1]/div/div/span/span'
+        }
+        # 获取cookie
+        token = self.check_get_token(xpath_info, (565, 352, 653, 385), "30400", 'accessToken')
+
         # 设置session
         session = Session()
         # 设置头部信息
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
-            "accessToken": "2d55919d78805e445ebdd48c7349d4d7",
+            "accessToken": token,
             "Origin": "http://akqb.zaixianjieshu.com",
             "Referer": "http://akqb.zaixianjieshu.com/H5/flowAdmin/index.html",
             "Content-Type": "application/json; charset=utf-8"
@@ -59,11 +70,11 @@ class DRB(BaseSpider):
 
 
 SH = {
-    "login_url": "",
+    "login_url": "http://szds.zaixianjieshu.com/szds/H5/flowAdmin/index.html#/user/login",
     "area": "四平",
     "product": "金葫芦",
-    "username": "",
-    "password": "",
+    "username": "liangliang152",
+    "password": "123456",
     "channel": ""
 }
 

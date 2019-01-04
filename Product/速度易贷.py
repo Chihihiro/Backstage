@@ -1,23 +1,22 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*- 
-# @Time : 2019/1/3 0003 17:06 
+# @Time : 2019/1/4 0004 17:15 
 # @Author : Chihiro 
 # @Site :  
-# @File : 爱卡钱包.py 
+# @File : 速度易贷.py 
 # @Software: PyCharm
-
-
 
 from requests import Session
 from BaseSpider import BaseSpider
 from DealWithCookie import cookie_to_dict
 from scrapy import Selector
 from time import sleep
+import json
 import time
 
 
-class DRB(BaseSpider):
 
+class DRB(BaseSpider):
     def __init__(self, account):
         super(DRB, self).__init__(account)
 
@@ -38,22 +37,22 @@ class DRB(BaseSpider):
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
             "accessToken": token,
-            "Origin": "http://akqb.zaixianjieshu.com",
-            "Referer": "http://akqb.zaixianjieshu.com/H5/flowAdmin/index.html",
+            "Origin": "http://xayjy.zaixianjieshu.com",
+            "Referer": "http://xayjy.zaixianjieshu.com/xayjy/H5/flowAdmin/index.html",
             "Content-Type": "application/json; charset=utf-8"
         }
         # 页面url
-        json_url = "http://101.37.187.240:88/channel/admin/data"
+        json_url = "http://47.110.185.92:88/channel/admin/data"
         args = {
-            'channelCode': "2019010114XMRBG",
+            'channelCode': f"{self.channel}",
             'merchantId': "0",
-            'registerBeginDate': int(
-                time.mktime(time.strptime(f"{self.today} 00:00:00", "%Y-%m-%d %H:%M:%S"))) * 1000,
-            'registerEndDate': int(
-                time.mktime(time.strptime(f"{self.tomorrow} 00:00:00", "%Y-%m-%d %H:%M:%S"))) * 1000
+            'registerBeginDate': int(time.mktime(time.strptime(f"{self.today} 00:00:00", "%Y-%m-%d %H:%M:%S")))*1000,
+            'registerEndDate': int(time.mktime(time.strptime(f"{self.tomorrow} 00:00:00", "%Y-%m-%d %H:%M:%S")))*1000
         }
         # 请求url
         response = session.post(json_url, headers=headers, json=args)
+        # info = response.json()
+        # print(info)
         info = response.json()['data']['channelDataList'][0]
         # 获取结果
         print(info)
@@ -67,15 +66,13 @@ class DRB(BaseSpider):
         self.write_sql(result)
 
 
-
-
 SH = {
-    "login_url": "http://akqb.zaixianjieshu.com/H5/flowAdmin/index.html#/user/login",
-    "area": "四平",
-    "product": "爱卡钱包",
-    "username": "aika1",
-    "password": "123456",
-    "channel": ""
+    "login_url": 'http://xayjy.zaixianjieshu.com/xayjy/H5/flowAdmin/index.html#/user/login',
+    "area": "外地",
+    "product": "易借钱包",
+    "username": "d444",
+    "password": "d444",
+    "channel": "2018122512HPENJ"
 }
 
 
@@ -84,7 +81,4 @@ all_area = [SH]
 while True:
     for each in all_area:
         DRB(each).get_info()
-        sleep(1200)
-
-
-
+    sleep(1200)
