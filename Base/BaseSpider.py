@@ -10,19 +10,12 @@
 import pymysql
 import json
 from time import sleep
-from PIL import Image
 from tool.OCR import ocr
 from cut_img import cut_img
 from selenium.webdriver import Chrome
-from urllib.request import urlretrieve
 from datetime import datetime, date, timedelta
 from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException
-from collections import OrderedDict
-
-
-from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-import json
 
 d = DesiredCapabilities.CHROME
 d['loggingPrefs'] = { 'performance':'ALL' }
@@ -62,6 +55,7 @@ class BaseSpider:
         login_url = self.login_url
         # 进入登录页面
         browser.get(login_url)
+        sleep(5)
         # 获取帐号+密码
         username = browser.find_element_by_xpath(xpath_info["username"])
         password = browser.find_element_by_xpath(xpath_info["password"])
@@ -253,7 +247,20 @@ class BaseSpider:
             "放款人数": ht_info["放款人数"],
             "当前时间": str(self.now)
         }
-        sql = 'INSERT INTO ht_data value("{产品名称}","{地区}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1)'.format_map(info)
+        # sql = 'INSERT INTO ht_data value("{产品名称}","{地区}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1)'.format_map(info)
+        sql = """
+            insert into  ht_data (product_name,area,
+            register_count,realname_count,apply_count,success_count,now,status)
+             VALUES ("{产品名称}","{地区}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1) 
+            on DUPLICATE KEY UPDATE  product_name = VALUES(`product_name`),
+            area = VALUES(`area`),
+            register_count = VALUES(`register_count`),
+            apply_count = VALUES(`apply_count`),
+            realname_count = VALUES(`realname_count`),
+            success_count = VALUES(`success_count`),
+            now = VALUES(`now`),
+            status = VALUES(`status`)""".format_map(info)
+
         # 执行SQL语句
         cursor.execute(sql)
         # 提交事务
