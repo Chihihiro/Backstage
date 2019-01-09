@@ -73,7 +73,7 @@ SP = {
 
 
 
-all_local = [SH, SP]
+all_local = [SH]
 
 
 

@@ -245,23 +245,23 @@ class BaseSpider:
             "实名人数": ht_info["实名人数"],
             "申请人数": ht_info["申请人数"],
             "放款人数": ht_info["放款人数"],
-            "当前时间": str(self.now)
+            "当前时间": str(self.now),
+            "备注": ht_info["备注"]
         }
         # sql = 'INSERT INTO ht_data value("{产品名称}","{地区}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1)'.format_map(info)
+        # 执行SQL语句
         sql = """
-            insert into  ht_data (product_name,area,
-            register_count,realname_count,apply_count,success_count,now,status)
-             VALUES ("{产品名称}","{地区}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1) 
+            insert into  ht_data (product_name,
+            register_count,realname_count,apply_count,success_count,now,status,remark)
+             VALUES ("{产品名称}",{注册人数},{实名人数},{申请人数},{放款人数},"{当前时间}", 1, "{备注}") 
             on DUPLICATE KEY UPDATE  product_name = VALUES(`product_name`),
-            area = VALUES(`area`),
             register_count = VALUES(`register_count`),
             apply_count = VALUES(`apply_count`),
             realname_count = VALUES(`realname_count`),
             success_count = VALUES(`success_count`),
             now = VALUES(`now`),
-            status = VALUES(`status`)""".format_map(info)
-
-        # 执行SQL语句
+            status = VALUES(`status`), 
+            remark = VALUES(`remark`)""".format_map(info)
         cursor.execute(sql)
         # 提交事务
         connect.commit()
@@ -269,4 +269,3 @@ class BaseSpider:
         # 关闭连接
         cursor.close()
         connect.close()
-

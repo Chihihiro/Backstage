@@ -65,8 +65,8 @@ SH = {
     "login_url": "http://wxqz.zaixianjieshu.com/wxqz/H5/flowAdmin/index.html#/user/login",
     "area": "上海",
     "product": "一点通",
-    "username": "yun",
-    "password": "123456",
+    "username": "yy5",
+    "password": "yy5",
     "channel": ""
 }
 
