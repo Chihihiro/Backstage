@@ -1,3 +1,12 @@
+#!/usr/bin/env python 
+# -*- coding: utf-8 -*- 
+# @Time : 2019/1/11 0011 11:43 
+# @Author : Chihiro 
+# @Site :  
+# @File : 金象贷.py 
+# @Software: PyCharm
+
+
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 # @Time    : 2018年12月26日 21:56
@@ -19,33 +28,31 @@ class YQS(BaseSpider):
 
     def get_info(self):
         xpath_info = {
-            "username": '//*[@id="main"]/div/div/div/div[2]/div/form/div[1]/div/div[1]/input',
-            "password": '//*[@id="main"]/div/div/div/div[2]/div/form/div[2]/div/div[1]/input',
-            "login_button": '//*[@id="main"]/div/div/div/div[2]/div/form/div[5]/div/button',
-            "check_code": '//*[@id="main"]/div/div/div/div[2]/div/form/div[4]/div/div[1]/input',
-            "code_image_url": '//*[@id="s-canvas"]',
-            "success_ele": '//span[@class="ivu-breadcrumb-item-link"]'
+            "username": '//*[@id="zhanghao"]',
+            "password": '//*[@id="mima"]',
+            "login_button": '/html/body/div/div/div/div[4]/a',
+            "check_code": '//*[@id="verify"]',
+            "code_image_url": '/html/body/div/div/div/div[3]/img',
+            "success_ele": '/html/body/div[1]/ul/li[4]/a'
         }
         # 设置session
         session = Session()
         # 获取cookie
-        token = self.check_get_token(xpath_info, (425, 435, 547, 469), "10400", "bearerToken")
-        # # 给session设置cookie
-        # session.cookies.update(cookie_to_dict(cookie))
+        cookie = self.check_get_cookie(xpath_info, (432, 319, 542, 372), "10400")
+        session.cookies.update(cookie_to_dict(cookie))
         # page的url
-        page_url = f"http://timedata.dgliao.cn/api/Bussiness/GetPartyBAccountData?PartyBId=1172&StartTime=2019-1-9&EndTime=2019-1-9&Limit=10&Offset=0&format=json"
+        page_url = f"https://vip.leyongqian.com/Mydata/?s_time={self.today}&e_time={self.today}"
         # 设置头部
         headers = {
-            "Authorization": f"""Bearer {token.replace('"', "")}""",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36",
         }
         # 访问url
         response = session.get(page_url, headers=headers)
         # 获取html
-        info = response.json()['rows'][0]
+        info = Selector(text=response.text)
         # 最终结果
         result = {
-            "注册人数": info['uploadCount'],
+            "注册人数": info.xpath('//*[@id="tb_iu_app"]/tr/td[3]/text()').extract()[0],
             "实名人数": "null",
             "申请人数": 'null',
             "放款人数": 'null',
@@ -56,10 +63,10 @@ class YQS(BaseSpider):
 
 
 SH = {
-    "login_url": "http://jiujidata.lyqchain.cn/#/login",
-    "area": "上海",
-    "product": "金满贷",
-    "username": "jmm595",
+    "login_url": "https://vip.leyongqian.com/",
+    "area": "",
+    "product": "金象贷",
+    "username": "qianzhijia461",
     "password": "123456",
     "channel": "",
 

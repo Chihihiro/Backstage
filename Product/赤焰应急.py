@@ -1,3 +1,12 @@
+#!/usr/bin/env python 
+# -*- coding: utf-8 -*- 
+# @Time : 2019/1/10 0010 16:37 
+# @Author : Chihiro 
+# @Site :  
+# @File : 赤焰应急.py 
+# @Software: PyCharm
+
+
 # !/usr/bin/env python
 # -*- coding:utf-8 -*-
 # @Time    : 2018年12月26日 21:56
@@ -56,11 +65,11 @@ class YQS(BaseSpider):
 
 
 SH = {
-    "login_url": "http://jiujidata.lyqchain.cn/#/login",
-    "area": "上海",
-    "product": "金满贷",
-    "username": "jmm595",
-    "password": "123456",
+    "login_url": "http://ftime.tisbaobao.cn/#/login",
+    "area": "",
+    "product": "赤焰应急",
+    "username": "ccyy669",
+    "password": "ccyy669",
     "channel": "",
 
 }
