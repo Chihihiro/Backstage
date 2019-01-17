@@ -29,33 +29,20 @@ class DRB(BaseSpider):
             "code_image_url": '//*[@id="s-canvas"]',
             "success_ele": '//*[@id="main"]/div/div[1]/div/div[3]/div/div/div/div/a/span'
         }
-        # 设置session
-        session = Session()
-        # 获取cookie
-        cookie = self.check_get_cookie(xpath_info, (300, 376, 600, 405), "30400")
-        # 将cookie设置给session
-        session.cookies.update(cookie_to_dict(cookie))
-        # 设置头部信息
-        headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
-        }
-        # 页面url
-        page_url = 'http://timedata.dgliao.cn/api/Bussiness/GetPartyBStatDataInfo?PartyBId=106'
-        # 请求url
-        response = session.get(page_url, headers=headers)
+        # 获取html
+        html = self.check_get_html(xpath_info, (369, 438, 516, 480), "10400")
         # 构造Selector
-        selector = response.json()
+        selector = Selector(text=html)
         # 获取数据
-        print(selector)
-        # info = selector.xpath('//*[@id="bigDataList"]/tbody/tr/td/text()').extract()
+        info = selector.xpath('/text()').re("(\d*)")
         # 获取结果
-        # result = {
-        #     "注册人数": info[2],
-        #     "实名人数": info[3],
-        #     "申请人数": "null",
-        #     "放款人数": "null"
-        # }
-        # self.write_sql(result)
+        result = {
+            "注册人数": info[0],
+            "实名人数": "null",
+            "申请人数": "null",
+            "放款人数": "null"
+        }
+        self.write_sql(result)
 
 
 
@@ -63,8 +50,8 @@ WD = {
     "login_url": "http://gzcus.michlhole.cn/#/login",
     "area": "外地",
     "product": "花花公子",
-    "username": "hhgz105",
-    "password": "hhgz105",
+    "username": "hhgz171",
+    "password": "hhgz171",
     "channel": ""
 }
 

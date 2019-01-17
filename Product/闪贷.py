@@ -3,7 +3,7 @@
 # @Time : 2019/1/10 0010 11:18 
 # @Author : Chihiro 
 # @Site :  
-# @File : 简信宝.py 
+# @File : shandai.py
 # @Software: PyCharm
 
 
@@ -26,24 +26,24 @@ class XHY(BaseSpider):
         session = Session()
         # 设置头部信息
         headers = {
-            "Cookie": "PHPSESSID=76bcb2dcbc3c8222df29786dd1095da7; XSRF-TOKEN=eyJpdiI6ImQzVlwvb2RcL01jMXNrRkZoeU1wSzRWZz09IiwidmFsdWUiOiJCM1dpTU52SHc2UlFoRlJ4WStiSFpIZEplUHlJT3pzNmIzK3dGR0l5amNVejBwcUxnMjJ5NlN5K2dxbHdGOXJXbFdjcVQreENoemNYQVZZRlhFR091UT09IiwibWFjIjoiZDNhNTFmN2RkNWYzNTc3MTQ3ZGQ2ZmU5ZmUyZGQ1MDAzMmMxZWMxNDliMWVkNDFjM2Y2MDdhZjRiMTFhMGZkZCJ9; laravel_session=eyJpdiI6IjhYdUdDb1wvUFgrOEdVd1laaWtrczV3PT0iLCJ2YWx1ZSI6Ilo5cEw0MndMMzJHak1wNStTa0luZmtnXC9sMVNLeUI5U0Z6MzJqK0c1Qkx4b0tjcE9XQlwvWmtcL1FIMEtvVnFDeVM1cXZrSWhIYW5sRmw0OWVaS2cxb1lBPT0iLCJtYWMiOiJmNmJhZTFiMWQyMWI0ZmQyMzUyOTdmZTJmMmVjZGZhNGY3N2Q0YzE2MTI5YjA4ZTUxYjJjZTM0YTQ4M2Q3YjQ3In0%3D",
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
         }
         # 页面url
-        url = 'http://www.daohuixinxi.com/admin/promoter/user'
+        url = f'http://www.youxinsign.com:13083/youka/ope-channel/getChannelRegist?startDate={self.today}&endDate={self.today}&encCode=0A18A358F7C7B59C'
         #参数
 
         # 请求url
         response = session.get(url, headers=headers)
         # 构造Selector
-        info = Selector(text=response.text)
-        num = info.xpath('/html/body/div/div[1]/div[1]/div/font[2]/text()').extract()[0]
+        info = response.json()['data']["datas"][0]["outRegistCount"]
+        print(info)
         # 获取结果
         result = {
-            "注册人数": num,
+            "注册人数": info,
             "实名人数": "null",
             "申请人数": "null",
-            "放款人数": "null"
+            "放款人数": "null",
+            "备注": ''
         }
         self.write_sql(result)
         print(result)
@@ -52,7 +52,7 @@ class XHY(BaseSpider):
 WD = {
     "login_url": "",
     "area": "",
-    "product": "",
+    "product": "闪贷",
     "username": "",
     "password": "",
     "channel": ""
@@ -65,5 +65,7 @@ all_area = [WD]
 for each in all_area:
     XHY(each).get_info()
     sleep(1200)
+
+
 
 
