@@ -37,8 +37,8 @@ class BaseSpider:
         self.now = datetime.now()  # 当前时间
         self.today = date.today()  # 今天日期
         self.channel = account["channel"]  # 渠道
-        self.yesterday = str(self.today - timedelta(days=1))  # 昨天日期
-        self.tomorrow = str(self.today + timedelta(days=1))  # 明天日期
+        self.yesterday = self.today - timedelta(days=1)  # 昨天日期
+        self.tomorrow = self.today + timedelta(days=1)  # 明天日期
 
     # 获取cookie
     def no_check_get_cookie(self, xpath_info):
@@ -162,6 +162,75 @@ class BaseSpider:
         browser.quit()
         print(cookie)
         return cookie
+
+    def check_get_html(self, xpath_info, img_size, image_type):
+        """
+        xpath_info : 表单元素的xpath组成的字典
+        xpath["username"] : 账号的xpath
+        xpath["password"] : 密码的xpath
+        xpath["check_code"] : 验证码输入框的xpath
+        xpath["code_image_url"] : 验证码图片img的xpath
+        xpath["login_button"] : 登陆按钮的xpath
+        xpath["success_ele"] : 登陆成功后的任意一个页面元素的xpath
+        """
+        # 模拟浏览器
+        browser = Chrome()
+        browser.minimize_window()
+        # 登录url
+        login_url = self.login_url
+        # 进入登录页面
+        browser.get(login_url)
+
+        def login():
+            # 获取帐号+密码
+            username = browser.find_element_by_xpath(xpath_info["username"])
+            password = browser.find_element_by_xpath(xpath_info["password"])
+            # 刷新验证码
+            browser.find_element_by_xpath(xpath_info["code_image_url"]).click()
+            browser.find_element_by_xpath(xpath_info["code_image_url"]).click()
+            sleep(1)
+            # 输入账号和密码
+            username.send_keys(self.user_name)
+            sleep(1)
+            password.send_keys(self.password)
+            # 获取验证码输入框
+            check_code = browser.find_element_by_xpath(xpath_info["check_code"])
+            # 截屏
+            file_name = f"../Image/{self.area}-{self.product}.png"
+            browser.save_screenshot(file_name)
+            print("截图完毕")
+            # 裁剪图像
+            cut_img(file_name, img_size)
+            # 识别图像
+            code = ocr(image_type, file_name)
+            print("识别完毕")
+            # 输入验证码
+            check_code.send_keys(code)
+            print(code)
+            # 点击登录
+            browser.find_element_by_xpath(xpath_info["login_button"]).click()
+            sleep(4)
+
+        while True:
+            try:
+                login()
+                browser.find_element_by_xpath(xpath_info["success_ele"])
+
+            except UnexpectedAlertPresentException:
+                browser.switch_to_alert().accept()
+                browser.get(self.login_url)
+                sleep(1)
+            except:
+                browser.refresh()
+            else:
+                break
+
+        sleep(5)
+        # 获取html
+        html = browser.page_source
+        browser.quit()
+        # print(html)
+        return html
 
     def check_get_token(self, xpath_info, img_size, image_type, token_field):
         """
