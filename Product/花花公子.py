@@ -34,13 +34,14 @@ class DRB(BaseSpider):
         # 构造Selector
         selector = Selector(text=html)
         # 获取数据
-        info = selector.xpath('/text()').re("(\d*)")
+        info = selector.xpath('//*[@id="main"]/div/div[2]/div/div/div/div[1]/div/div/div[2]/div/div/h3[2]/span/text()').re("(\d*)")
         # 获取结果
         result = {
             "注册人数": info[0],
             "实名人数": "null",
             "申请人数": "null",
-            "放款人数": "null"
+            "放款人数": "null",
+            '备注': ""
         }
         self.write_sql(result)
 
@@ -50,9 +51,10 @@ WD = {
     "login_url": "http://gzcus.michlhole.cn/#/login",
     "area": "外地",
     "product": "花花公子",
-    "username": "hhgz171",
-    "password": "hhgz171",
+    "username": "hhgz166",
+    "password": "hhgz166",
     "channel": ""
+
 }
 
 

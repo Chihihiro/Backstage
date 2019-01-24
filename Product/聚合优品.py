@@ -32,6 +32,8 @@ class YQS(BaseSpider):
         # 获取cookie
         cookie = self.check_get_cookie(xpath_info, (534, 359, 613, 388), "10400")
         # 给session设置cookie
+        print(cookie)
+        print(cookie_to_dict(cookie))
         session.cookies.update(cookie_to_dict(cookie))
         # page的url
         page_url = "http://payday-sc1.lkdjhls.cn/admin_agent/mySCustomerList"
@@ -51,6 +53,7 @@ class YQS(BaseSpider):
         # 访问url
         response = session.post(page_url, headers=headers, data=form)
         # 获取html
+        print(response.json())
         info = response.json()['body']
         # 最终结果
         result = {

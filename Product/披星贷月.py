@@ -1,11 +1,10 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*- 
-# @Time : 2019/1/3 0003 17:06 
+# @Time : 2019/1/23 0023 11:13 
 # @Author : Chihiro 
 # @Site :  
-# @File : 爱卡钱包.py 
+# @File : 披星贷月.py 
 # @Software: PyCharm
-
 
 
 from requests import Session
@@ -43,9 +42,9 @@ class DRB(BaseSpider):
             "Content-Type": "application/json; charset=utf-8"
         }
         # 页面url
-        json_url = "http://101.37.187.240:88/channel/admin/data"
+        json_url = "http://101.37.191.5:2003/channel/admin/data"
         args = {
-            'channelCode': "2019010114XMRBG",
+            'channelCode': self.channel,
             'merchantId': "0",
             'registerBeginDate': int(
                 time.mktime(time.strptime(f"{self.today} 00:00:00", "%Y-%m-%d %H:%M:%S"))) * 1000,
@@ -61,25 +60,24 @@ class DRB(BaseSpider):
             "注册人数": info['registerCount'],
             "实名人数": "null",
             "申请人数": info['applyCount'],
-            "放款人数": info['loanCount']
+            "放款人数": info['loanCount'],
+            "备注": ""
         }
         print(result)
         self.write_sql(result)
 
 
-
-
-SH = {
-    "login_url": "http://akqb.zaixianjieshu.com/H5/flowAdmin/index.html#/user/login",
-    "area": "四平",
-    "product": "爱卡钱包",
-    "username": "aika1",
+SP = {
+    "login_url": "http://jhsz.zaixianjieshu.com/jhsz/H5/flowAdmin/index.html#/user/login",
+    "area": "",
+    "product": "披星贷月",
+    "username": "tong",
     "password": "123456",
-    "channel": ""
+    "channel": "2019011322MPZJD"
 }
 
 
-all_area = [SH]
+all_area = [SP]
 
 while True:
     for each in all_area:

@@ -1,42 +1,35 @@
 #!/usr/bin/env python 
 # -*- coding: utf-8 -*- 
-# @Time : 2019/1/21 0021 12:55 
+# @Time : 2019/1/22 0022 15:26 
 # @Author : Chihiro 
 # @Site :  
-# @File : 万三借.py 
+# @File : 钱包到.py 
 # @Software: PyCharm
 
 
-import re
+
+
+
+
 from requests import Session
 from BaseSpider import BaseSpider
 from DealWithCookie import cookie_to_dict
-import time
-import warnings
 from scrapy import Selector
-import json
-import pymysql
-import json
 from time import sleep
-from tool.OCR import ocr
-from cut_img import cut_img
+import json
 from selenium.webdriver import Chrome
-from datetime import datetime, date, timedelta
-from selenium.common.exceptions import NoSuchElementException, UnexpectedAlertPresentException
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import re
 
-class BJZ(BaseSpider):
+
+class XHY(BaseSpider):
     def __init__(self, account):
-        super(BJZ, self).__init__(account)
+        super(XHY, self).__init__(account)
 
     def get_info(self):
         xpath_info = {
-            "username": '//*[@id="app"]/div/div[1]/input',
-            "password": '//*[@id="app"]/div/div[2]/input',
-            "login_button": '//*[@id="app"]/div/button',
-            "check_code": "",
-            "code_image_url": "",
-            "success_ele": ""
+            "username": '//*[@id="app"]/div/div/div[2]/form/div[1]/div/div/input',
+            "password": '//*[@id="app"]/div/div/div[2]/form/div[2]/div/div/input',
+            "login_button": '//*[@id="app"]/div/div/div[2]/form/div[3]/button',
         }
         # 模拟浏览器
         browser = Chrome()
@@ -55,35 +48,35 @@ class BJZ(BaseSpider):
         # 登录
         browser.find_element_by_xpath(xpath_info["login_button"]).click()
         sleep(3)
-        # 获取Cookie信息
+        num = browser.find_element_by_xpath('//*[@id="app"]/div/div[2]/div[2]/div/div[1]/span[2]').text
 
-        num = browser.find_element_by_xpath('//*[@id="app"]/div/div/div/div[2]/div/div/div/div/div/p[2]').text
         # 退出浏览器
         browser.quit()
+        # print(num)
+        # 获取结果
         result = {
-            "注册人数": num,
+            "注册人数": re.search('(\d+)', num).group(1),
             "实名人数": "null",
             "申请人数": "null",
             "放款人数": "null",
-            "备注": ''
+            '备注': ''
         }
         self.write_sql(result)
 
 
 SH = {
-    "login_url": 'http://132.232.115.29/tdss-admin/#/',
+    "login_url": "http://dailibao-admin.kongapi.com/login",
     "area": "",
-    "product": "万三借",
-    "username": "zz20190114026",
+    "product": "钱包到",
+    "username": "QBD_KLSQ",
     "password": "123456",
     "channel": ""
 }
 
 
-all_local = [SH]
-
+all_area = [SH]
 
 while True:
-    for each in all_local:
-        BJZ(each).get_info()
-    time.sleep(1200)
+    for each in all_area:
+        XHY(each).get_info()
+        sleep(600)
